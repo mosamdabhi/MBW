@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+   <title>Yeah!</title>
+</head>
+<body>
+    {% if num_not_annotated == 0 %}
+       <h1>You are finished, this joint is annotated for all frames!</h1>
+    {% else %}
+       <h1>You got through all the images!</h1>
+       <p>However, there are still <b> {{ num_not_annotated }} </b> not annotated images</p>
+       <p>This might be because you skipped some image(s) or deleted the corresponding annotation files.</p>
+       <p>Click <button><a href="/restart">Restart</a></button> to work on those image(s)</p>
+       <p>If you don't want to / don't care, you can just close this browser window.</p>
+    {% endif %}
+</body>
+</html>

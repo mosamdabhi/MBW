@@ -1,0 +1,1 @@
+{"num_joints": 6, "joint_connections": [[0, 1], [1, 2], [2, 3], [1, 4], [1, 5]], "joints_name": ["nose_tip", "top_fin", "lower_fin", "tail_fin", "left_fin", "right_fin"], "range_scale": 1, "R": [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]}
