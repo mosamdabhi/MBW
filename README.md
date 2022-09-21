@@ -85,8 +85,6 @@ Data & Pre-trained models
 
 Run unit tests
 ============
-
-- Uncomment each subcomponent to run their separate unit tests:
     ``` 
     ./scripts/unit_tests.sh
     ```
