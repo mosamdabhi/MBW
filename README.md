@@ -91,6 +91,19 @@ Run unit tests
     ./scripts/unit_tests.sh
     ```
 
+Training (Generate labels from MBW)
+============
+    ``` 
+    ./scripts/train.sh
+    ```
+
+Evaluation and visualization
+============
+    ``` 
+    ./scripts/eval.sh
+    ./scripts/visualize.sh    
+    ```
+
 
 Jupyter notebook example
 ============
