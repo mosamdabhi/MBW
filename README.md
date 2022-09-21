@@ -85,15 +85,14 @@ Data & Pre-trained models
 
 Run unit tests
 ============
-    ``` 
+
     ./scripts/unit_tests.sh
-    ```
+
 
 Training (Generate labels from MBW)
 ============
-    ``` 
+
     ./scripts/train.sh
-    ```
 
 Evaluation and visualization
 ============
