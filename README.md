@@ -97,10 +97,8 @@ Training (Generate labels from MBW)
 
 Evaluation and visualization
 ============
-    ``` 
     ./scripts/eval.sh
     ./scripts/visualize.sh    
-    ```
 
 
 Jupyter notebook example
