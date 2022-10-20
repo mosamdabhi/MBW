@@ -1,11 +1,11 @@
-Multiview Bootstrapping in the Wild (NeurIPS 2022)
+MBW: Multiview Bootstrapping in the Wild (NeurIPS 2022)
 ============
 
 
 
 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/08/Logo_for_Conference_on_Neural_Information_Processing_Systems.svg/1200px-Logo_for_Conference_on_Neural_Information_Processing_Systems.svg.png" width=200>
 
-### [Paper](https://arxiv.org/abs/2210.01721) | [Project page](https://multiview-bootstrapping-in-wild.github.io) | [MBW-Zoo Dataset: ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7058567.svg)](https://doi.org/10.5281/zenodo.7058567) | [MBW pretrained models: ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7054596.svg)](https://doi.org/10.5281/zenodo.7054596)  <br>
+### [Paper](https://arxiv.org/abs/2210.01721) | [Project page](https://multiview-bootstrapping-in-wild.github.io) | [MBW-Zoo Dataset](https://github.com/mosamdabhi/MBW-Data): [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7058567.svg)](https://doi.org/10.5281/zenodo.7058567) | [MBW pretrained models: ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7054596.svg)](https://doi.org/10.5281/zenodo.7054596)  <br>
 
  
 
@@ -112,7 +112,7 @@ If you use our code, dataset, or models in your research, please cite with:
 ```
 
 @inproceedings{dabhi2022mbw,
-	title={Multi-view Bootstrapping in the Wild},
+	title={MBW: Multi-view Bootstrapping in the Wild},
 	author={Dabhi, Mosam and Wang, Chaoyang and Clifford, Tim and Jeni, Laszlo and Fasel, Ian and Lucey, Simon},
 	booktitle={Thirty-sixth Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
 	year={2022},
