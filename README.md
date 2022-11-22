@@ -22,7 +22,7 @@ Multiview Bootstrapping in the Wild (MBW) provides a powerful way of generating 
 
 Requirements (if using GPU)
 ============
-- Tested in ``Pytorch 1.11``, with ``CUDA 11.4``
+- Tested in ``Pytorch 1.11``, with ``CUDA 11.3``
 
 &nbsp;
 
