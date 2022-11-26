@@ -102,9 +102,11 @@ Evaluation and visualization
     ./scripts/visualize.sh    
 
 
-Jupyter notebook example
+Demo (Jupyter notebook examples)
 ============
-<img width="1111" alt="comingsoon" src="https://user-images.githubusercontent.com/6929121/87441911-486bf600-c611-11ea-9d45-94c215733cf7.png">
+Please run [demo.ipynb](https://github.com/mosamdabhi/MBW/blob/main/demo.ipynb) to play around and see visualizations of labels in the provided Jupyter notebook. We provide tools to visualize the 2D predictions (along with a confidence flag of `Accept` or `Reject`). The reconstructed 3D could also be visualized via an interactive plotly visualization tool.
+
+
 
 
 ### Citation
