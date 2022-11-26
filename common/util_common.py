@@ -6,8 +6,171 @@ import numpy as np
 import torch
 from PIL import Image
 from torch.nn.functional import relu
+from pathlib import Path
+from natsort import natsorted
+import _pickle as cPickle
+import json
 
 sys.path.append("configs")
+
+def process_dataset(args, GT_Flag, pkl_names):
+    """
+    Dataset processing
+    """
+
+    W_Pred, W_GT, S_Pred, S_GT, confidence, reprojection_error, BBox = [], [], [], [], [], [], []
+
+    for cam_idx in range(len(pkl_names)):
+
+        """Load the pickle file"""
+        with open(pkl_names[cam_idx], "rb") as fid:
+            pickled_data = cPickle.load(fid)
+
+        """ Fill the data relevant to the camera id """
+        W_tmp, S_tmp, W_GT_tmp, S_GT_tmp, confidence_tmp, reprojection_error_tmp, BBox_tmp = (
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
+
+        for frame_idx in range(len(pickled_data)):
+
+            if args.field_of_validation == "Inliers" or args.field_of_validation == "Predictions":
+                W_field_name = "W_" + args.field_of_validation
+            else:
+                W_field_name = "W_" + args.field_of_validation + "_Iter_" + str(args.MBW_Iteration)
+
+            if args.field_of_validation == "MV_Train":
+                S_field_name = "S_" + args.field_of_validation + "_Iter_" + str(args.MBW_Iteration)
+            else:
+                S_field_name = "S_MV" + "_Iter_" + str(args.MBW_Iteration)
+
+            W_tmp.append(pickled_data[frame_idx][W_field_name])
+            confidence_tmp.append(pickled_data[frame_idx]["confidence"])
+
+            if not args.validate_manual_labels:
+                if S_field_name in pickled_data[frame_idx]:
+                    S_tmp.append(pickled_data[frame_idx][S_field_name])
+
+                if "reprojection_error_Iter_" + str(args.MBW_Iteration) in pickled_data[frame_idx]:
+                    reprojection_error_tmp.append(
+                        pickled_data[frame_idx][
+                            "reprojection_error_Iter_" + str(args.MBW_Iteration)
+                        ]
+                    )
+                if "BBox" in pickled_data[frame_idx]:
+                    BBox_tmp.append(pickled_data[frame_idx]["BBox"])
+                W_GT_tmp.append(pickled_data[frame_idx]["W_GT"])
+
+                if GT_Flag:
+                    S_GT_tmp.append(pickled_data[frame_idx]["S_GT"])
+
+        W_tmp = np.asarray(W_tmp)
+        S_tmp = np.asarray(S_tmp)
+        confidence_tmp = np.asarray(confidence_tmp)
+        reprojection_error_tmp = np.asarray(reprojection_error_tmp)
+        BBox_tmp = np.asarray(BBox_tmp)
+        W_GT_tmp = np.asarray(W_GT_tmp)
+        if GT_Flag:
+            S_GT_tmp = np.asarray(S_GT_tmp)
+
+        W_Pred.append(W_tmp)
+        S_Pred.append(S_tmp)
+        confidence.append(confidence_tmp)
+        reprojection_error.append(reprojection_error_tmp)
+        BBox.append(BBox_tmp)
+        W_GT.append(W_GT_tmp)
+        if GT_Flag:
+            S_GT.append(S_GT_tmp)
+
+    W_Pred = np.asarray(W_Pred)
+    S_Pred = np.asarray(S_Pred)
+    confidence = np.asarray(confidence)
+    reprojection_error = np.asarray(reprojection_error)
+    BBox = np.asarray(BBox)
+    W_GT = np.asarray(W_GT)
+    if GT_Flag:
+        S_GT = np.asarray(S_GT)
+    
+    loaded_data = {'W_Pred': W_Pred, \
+                   'S_Pred': S_Pred, \
+                   'BBox': BBox, \
+                   'confidence': confidence, \
+                   'reprojection_error': reprojection_error, \
+                   'W_GT': W_GT, \
+                   'S_GT': S_GT}
+
+    return loaded_data
+
+
+
+def load_datasets(args):
+    dataset = "data/" + args.dataset
+    dataset_img = dataset + "/images"
+    dataset_annot = dataset + "/annot/"
+
+    # Annotation pkl names
+    pkl_names = []
+    for path in Path(dataset_annot).rglob("*.pkl"):
+        pkl_names.append(path)
+    pkl_names = [Path(p) for p in natsorted([str(p) for p in pkl_names])]
+
+    # Extract total number of views
+    total_views = len(pkl_names)
+
+    # Image path names
+    image_paths_cam = []
+    for cam_idx in range(total_views):
+        image_paths_cam_ = []
+        for path in Path(dataset_img + "/CAM_" + str(cam_idx + 1) + "/").rglob(
+            "*" + str(args.img_type)
+        ):
+            image_paths_cam_.append(path)
+        image_paths_cam_ = [Path(p) for p in natsorted([str(p) for p in image_paths_cam_])]
+        image_paths_cam.append(image_paths_cam_)
+
+    ## If we have G.T., extract G.T. 2D and 3D, else only 2D
+    # Find total number of frames
+    with open(str(pkl_names[0]), "rb") as fid:
+        pickled_data = cPickle.load(fid)
+    total_frames = len(pickled_data)
+
+    # Check whether the data has G.T. 2D and 3D
+    if "S_GT" in pickled_data[0]:
+        GT_Flag = True
+    else:
+        GT_Flag = False
+
+    # Find number of joints/keypoints
+    num_joints = pickled_data[0]["W_GT"].shape[0]
+
+    # Extract joint connections
+    with open("configs/joints/" + str(args.dataset) + ".json", "r") as fid:
+        joints_data = json.load(fid)
+    
+    joint_connections = joints_data["joint_connections"]
+    range_scale = joints_data["range_scale"]
+    rigid_rotation = joints_data["R"]
+
+    """ Generate the validation and refined directories, if required """
+    loaded_data = process_dataset(
+        args, GT_Flag, pkl_names
+    )
+
+    misc_data = {'joint_connections': joint_connections, \
+                    'range_scale': range_scale, \
+                    'rigid_rotation': rigid_rotation, \
+                    'num_joints': num_joints, \
+                    'GT_Flag': GT_Flag, \
+                    'total_frames': total_frames, \
+                    'total_views': total_views, \
+                    'image_paths': image_paths_cam}
+
+    return loaded_data, misc_data
 
 
 def calculate_BBox(input_matrix):

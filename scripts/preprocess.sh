@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dataset='Chimpanzee'
+dataset='train'
 percentage_if_gt=5
 
 ##### GPU System #####
@@ -13,10 +13,10 @@ MBW_Iteration=0
 host=localhost
 port=8980
 
-unittest="True"
+unittest="False"
 
 ## Preprocess
-CUDA_VISIBLE_DEVICES=$GPU_ID python common/preprocess.py \
+CUDA_VISIBLE_DEVICES=$GPU_ID python common/annotate.py \
                                 --dataset=$dataset \
                                 --percentage_if_gt=$percentage_if_gt \
                                 --host=$host \

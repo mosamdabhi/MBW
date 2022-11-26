@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-dataset='Chimpanzee'
+dataset='Flamingo'
 
 ##### GPU System #####
 GPU_ID=0
@@ -13,7 +13,7 @@ model=models/flow/flow-pretrained.pth
 flow_iters=20
 img_type=.jpg
 log_dir=logs/flow/$dataset
-to_plot_results="False"
+to_plot_results="True"
 unittest="True"
 
 

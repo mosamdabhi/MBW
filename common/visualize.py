@@ -168,11 +168,67 @@ def process_dataset(args, GT_Flag, pkl_names):
     return W_Pred, S_Pred, confidence, reprojection_error, BBox, W_GT, S_GT
 
 
+def gen_predictions_with_confidence(im, W_Pred, confidence, joint_connections):
+
+    color_kpts = "r"    
+
+    total_views = len(im)
+
+    if total_views == 1:
+        subplots = plt.subplots(1, total_views)
+        fig = subplots[0]
+        axes = subplots[1]
+        axes.imshow(im[0])
+        # 2D label visualizations
+        axes.scatter(x=W_Pred[:, 0], y=W_Pred[:, 1], c=color_kpts, s=40)
+        xlines, ylines = extract_bone_connections(W_Pred, joint_connections)
+        axes.plot(xlines, ylines, c=color_kpts, linewidth=4)
+        axes.axes.xaxis.set_visible(False)
+        axes.axes.yaxis.set_visible(False)
+
+    else:
+        subplots = plt.subplots(1, total_views)
+        fig = subplots[0]
+        axes = subplots[1]
+
+        for cam_idx in range(total_views):
+
+            axes[cam_idx].imshow(im[cam_idx])
+
+            # 2D label visualizations
+            axes[cam_idx].scatter(x=W_Pred[cam_idx, :, 0], y=W_Pred[cam_idx, :, 1], c=color_kpts, s=40)
+            xlines, ylines = extract_bone_connections(W_Pred[cam_idx, :, :], joint_connections)
+            axes[cam_idx].plot(xlines, ylines, c=color_kpts, linewidth=4)
+            axes[cam_idx].axes.xaxis.set_visible(False)
+            axes[cam_idx].axes.yaxis.set_visible(False)
+
+            if confidence[cam_idx] == True:
+                fontdict = {"fontsize": 50, "color": "g"}
+                label = "Accepted"
+            else:
+                fontdict = {"fontsize": 50, "color": "r"}
+                label = "Rejected"
+
+            axes[cam_idx].axes.set_title(label, fontdict)
+
+    figure = plt.gcf()
+    figure.set_size_inches(38, 36)
+    return figure
+    # plt.savefig(img_store_location, bbox_inches="tight")
+    # plt.cla()
+    # plt.clf()
+    # plt.close()
+
+
+
+
 def gen_image_with_errors(
     im, W, reprojection_error, confidence, img_store_location, joint_connections
 ):
 
     color_kpts = "r"
+
+    reproj_errors_in_plot = False
 
     total_views = len(im)
 
@@ -206,14 +262,14 @@ def gen_image_with_errors(
 
             if confidence[cam_idx] == True:
                 fontdict = {"fontsize": 50, "color": "g"}
-                if total_views <= 2:
+                if total_views <= 2 and reproj_errors_in_plot:
                     label = "Accepted | Reproj. error: {:.4f}".format(reprojection_error[cam_idx])
                 else:
                     label = "Accepted"
 
             else:
                 fontdict = {"fontsize": 50, "color": "r"}
-                if total_views <= 2:
+                if total_views <= 2 and reproj_errors_in_plot:
                     label = "Rejected | Reproj. error: {:.4f}".format(reprojection_error[cam_idx])
                 else:
                     label = "Rejected"
@@ -268,6 +324,53 @@ def gen_image(im, W, img_store_location, joint_connections):
     plt.clf()
     plt.close()
 
+
+def gen_BBox_demo(im, BBox, joint_connections):
+
+    color_kpts = "r"
+
+    total_views = len(im)
+
+    if total_views == 1:
+        subplots = plt.subplots(1, total_views)
+        fig = subplots[0]
+        axes = subplots[1]
+        axes.imshow(im[0])
+        # 2D label visualizations
+        # BBox label visualizations
+        (xmax, xmin, ymax, ymin) = BBox.tolist()
+        width = xmax - xmin
+        height = ymax - ymin
+        axes.add_patch(
+            Rectangle((xmin, ymin), width, height, edgecolor="red", facecolor="none", linewidth=3)
+        )
+        axes.axes.xaxis.set_visible(False)
+        axes.axes.yaxis.set_visible(False)
+
+    else:
+        subplots = plt.subplots(1, total_views)
+        fig = subplots[0]
+        axes = subplots[1]
+
+        for cam_idx in range(total_views):
+            axes[cam_idx].imshow(im[cam_idx])
+
+            # BBox label visualizations
+            (xmax, xmin, ymax, ymin) = BBox[cam_idx, :].tolist()
+            width = xmax - xmin
+            height = ymax - ymin
+            axes[cam_idx].add_patch(
+                Rectangle(
+                    (xmin, ymin), width, height, edgecolor="red", facecolor="none", linewidth=3
+                )
+            )
+            axes[cam_idx].axes.xaxis.set_visible(False)
+            axes[cam_idx].axes.yaxis.set_visible(False)
+
+    figure = plt.gcf()
+    figure.set_size_inches(38, 36)
+
+    return figure
 
 def gen_BBox(im, BBox, img_store_location, joint_connections):
 
@@ -391,8 +494,6 @@ def main(args):
                 for cam_idx in range(total_views):
                     logs_path_dir_cam_specific = logs_path_dir_cam + "/CAM_" + str(cam_idx + 1)
                     make_dir(logs_path_dir_cam_specific)
-                    # cam_idx = 1
-                    # frame_idx = 90
                     for frame_idx in tqdm(non_nan_indices):
                         im = []
                         im.append(img.imread(image_paths_cam[cam_idx][frame_idx]))

@@ -1,7 +1,7 @@
 #!/bin/bash 
 
-dataset='Chimpanzee'
-percentage_if_gt=5
+dataset='Human36M'
+percentage_if_gt=10
 
 ##### GPU System #####
 GPU_ID=1
