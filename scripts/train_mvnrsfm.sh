@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-dataset='Chimpanzee'
+dataset='Human36M'
 
 ##### GPU System #####
 GPU_ID=1
@@ -15,7 +15,7 @@ model=models/mvnrsfm/$dataset
 dataset_metric_multiplier=1000
 break_training_counter=10000
 from_scratch='False'
-unittest='True'
+unittest='False'
 
 CUDA_VISIBLE_DEVICES=$GPU_ID nice -10 python3 modules/mvnrsfm/mvnrsfm_train.py 	--mode=$mode \
 														--dataset=$dataset \

@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-dataset='Flamingo'
+dataset='Human36M'
 
 ##### GPU System #####
 GPU_ID=0
@@ -14,7 +14,7 @@ flow_iters=20
 img_type=.jpg
 log_dir=logs/flow/$dataset
 to_plot_results="True"
-unittest="True"
+unittest="False"
 
 
 CUDA_VISIBLE_DEVICES=$GPU_ID nice -10 python modules/flow/flow_infer.py \

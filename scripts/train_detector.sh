@@ -1,9 +1,9 @@
 #!/bin/bash 
 
-dataset='Chimpanzee'
+dataset='Human36M'
 
 ##### GPU System #####
-GPU_ID=0
+GPU_ID=1
 
 #### Iteration #####
 MBW_Iteration=1
@@ -14,7 +14,7 @@ scale_factor=200
 TRAIN_END_EPOCH=200
 img_type=.jpg
 leverage_prior_object_knowledge='True'
-unittest='True'
+unittest='False'
 
 # echo "*********** Training 2D Detector ****************"
 CUDA_VISIBLE_DEVICES=$GPU_ID python modules/detector/detector.py \
